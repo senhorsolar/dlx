@@ -42,7 +42,7 @@ class DancingLinks
 {
 protected:
 	std::vector<Node*> solution;
-	std::vector<std::vector<int> >  mat;
+	std::vector<std::vector<int> > mat;
 	std::vector<std::string> column_names;
 		
 public:
@@ -81,7 +81,6 @@ public:
 	  Initialize doubly linked list and set the root node.
 	 */
 	DancingLinks(std::vector<std::vector<int> > mat, std::vector<std::string> column_names) : mat(mat), column_names(column_names) {
-
 		createNodes();
 	}
 	
@@ -220,7 +219,7 @@ private:
 		
 	}
 	
-	void display_solution(int q) {
+	virtual void display_solution(int q) {
 
 		std::cout << "solution found:" << '\n';
 		
