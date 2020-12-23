@@ -62,7 +62,7 @@ public:
 		while (std::getline(s, column_name, ',')) {
 			column_names.push_back(column_name);
 		}
-
+		
 		// Parse data
 		std::string val;
 		while (std::getline(ss, line)) {
@@ -73,7 +73,6 @@ public:
 			}
 			mat.push_back(v);
 		}
-
 		createNodes();
 	}
 
@@ -85,7 +84,7 @@ public:
 	}
 	
         /* 
-	  Destroy doubly linked list
+	  Destroy doubly linked lists
 	*/
 	~DancingLinks() {
 
@@ -112,12 +111,14 @@ public:
 	/*
 	  Find solution(s)
 	 */
-	void search() {
+	int search() {
 		search_recursive(0);
+		return nsolutions;
 	}
 
 private:
 	Node* root_node;
+	unsigned int nsolutions = 0;
 
 	void createNodes() {
 		root_node = new Node("h");		
@@ -282,6 +283,7 @@ private:
 		// Solution found
 		if (root_node->right == root_node) {
 			display_solution(k);
+			nsolutions += 1;
 		}
 		
 		else {
