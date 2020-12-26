@@ -119,6 +119,10 @@ public:
 		return nsolutions;
 	}
 
+	int solution_count() {
+		return nsolutions;
+	}
+
 private:
 	Node* root_node;
 	unsigned int nsolutions = 0;
