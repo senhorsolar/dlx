@@ -243,7 +243,8 @@ private:
 			std::cout << '\n';
 		}
 	}
-	
+
+	static inline
 	void cover(Node* col_node) {
 		col_node->right->left = col_node->left;
 		col_node->left->right = col_node->right;
@@ -257,7 +258,8 @@ private:
 			}
 		}	
 	}
-	
+
+	static inline
 	void uncover(Node* col_node) {
 		for (Node* i_node = col_node->up; i_node != col_node; i_node = i_node->up) {
 			for (Node* j_node = i_node->left; j_node != i_node; j_node = j_node->left) {
