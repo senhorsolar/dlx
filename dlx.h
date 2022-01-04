@@ -13,6 +13,7 @@
 namespace Dlx {
 
 using Index=size_t;
+using BinaryMatrix=std::vector<std::vector<bool>>;
 
 struct Node
 {
@@ -42,7 +43,7 @@ struct Node
 class DancingLinks
 {
 public:
-    using BinaryMatrix=std::vector<std::vector<bool>>;
+    
     using Row=size_t;
     using Solution=std::vector<Row>;
     
