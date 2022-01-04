@@ -8,6 +8,7 @@
 #define DLX_H
 
 #include <algorithm>
+#include <iostream>
 #include <vector>
 
 namespace Dlx {
@@ -231,7 +232,7 @@ DancingLinks::Search_(size_t k)
     // Solution found
     if (m_nodes[0].right == 0) {
 	Solution solution;
-	std::transform(m_cur_solution.begin(), m_cur_solution.end(),
+	std::transform(m_cur_solution.begin(), m_cur_solution.begin()+k,
 		       std::back_inserter(solution),
 		       [&](Index r) -> Index { return m_nodes[r].row;});
 	m_solutions.push_back(std::move(solution));

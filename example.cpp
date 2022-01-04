@@ -45,9 +45,9 @@ int main()
 				      {0, 1, 0, 0, 0, 0, 1},
 				      {0, 0, 0, 1, 1, 0, 1}};
 
-    // size_t n = 1000;
-    // test_matrix = gen_rand_matrix<bool>(n);
-    // column_names = gen_column_names(n);
+    size_t n = 50;
+    test_matrix = gen_rand_matrix<bool>(n);
+    column_names = gen_column_names(n);
     
     auto dlx = Dlx::DancingLinks(test_matrix);
     dlx.Search();
@@ -55,6 +55,7 @@ int main()
     std::cout << dlx.SolutionCount() << '\n';
 
     for (const auto& solution : dlx.GetSolutions()) {
+	std::cout << "solution:\n";
 	auto decoded_solution = dlx.DecodeSolution(column_names, solution);
 	for (auto& row : decoded_solution) {
 	    for (auto& s : row) {
