@@ -24,11 +24,11 @@ Matrix<T> gen_rand_matrix(size_t n)
     return mat;
 }
 
-vector<string> gen_column_names(size_t n)
+std::vector<std::string> gen_column_names(size_t n)
 {
-    vector<string> col_names;
+    std::vector<std::string> col_names;
     for (size_t i = 0; i < n; ++i)
-	col_names.push_back(to_string(i));
+	col_names.push_back(std::to_string(i));
     return col_names;
 }
 
