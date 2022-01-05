@@ -78,6 +78,15 @@ public:
 	    m_rows.push_back(std::move(row));
 	}
 
+	std::cout << "----rows start:\n";
+	for (auto& row : m_rows) {
+	    for (auto c : row) {
+		std::cout << c << ",";
+	    }
+	    std::cout << '\n';
+	}
+	std::cout << "----rows end\n";
+
 	std::cout << "n nodes: " << node_count << '\n';
 
 	// Initialize memory pool and root node
