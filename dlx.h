@@ -19,8 +19,10 @@ namespace Dlx {
 using Index=size_t;
 using BinaryMatrix=std::vector<std::vector<bool>>;
 
-struct Node
+class Node
 {
+public:
+    
     Node* left;
     Node* right;
     Node* up;
@@ -92,6 +94,7 @@ public:
 	// Initialize memory pool and root node
 	m_pool.Resize(node_count + 1 /* for root */ + ncols);
 	m_root = m_pool.New();
+	m_root->size = (size_t)(-1);
 
 	// For keeping track of last node in column
 	std::vector<Node*> prev_row(ncols);
@@ -238,7 +241,7 @@ private:
     {
 	Node* best_node = m_root;
 	for (Node* col_node = m_root->right; col_node != m_root; col_node = col_node->right) {
-	    if (col_node->size > best_node->size) {
+	    if (col_node->size < best_node->size) {
 		best_node = col_node;
 	    }
 	}
@@ -253,43 +256,44 @@ private:
 	Node* col_node = ChooseColumn();
 
 	// Potential solution found
-	if (col_node == m_root) {
+	if (m_root->right == m_root) {
 	    Solution solution;
 	    std::transform(m_cur_solution.begin(), m_cur_solution.begin() + k,
 			   std::back_inserter(solution),
 			   [](Node* r) -> Index { return r->row_idx;});
 	    if (solution.size()) {
 		m_solutions.push_back(std::move(solution));
-	    }
-	    return;
+	    }	    
 	}
+	else {
 
-	Cover(col_node);
-
-	for (Node* r_node = col_node->down; r_node != col_node; r_node = r_node->down) {
+	    Cover(col_node);
 	    
-	    if (k >= m_cur_solution.size()) {
-		m_cur_solution.resize(k * 2 + 1);
+	    for (Node* r_node = col_node->down; r_node != col_node; r_node = r_node->down) {
+		
+		if (k >= m_cur_solution.size()) {
+		    m_cur_solution.resize(k * 2 + 1);
+		}
+		
+		m_cur_solution[k] = r_node;
+		
+		for (Node* c_node = r_node->right; c_node != r_node; c_node = c_node->right) {
+		    Cover(c_node->column);
+		}
+		
+		Search_(k+1);
+		
+		// \todo These two lines necessary?
+		r_node = m_cur_solution[k];
+		col_node = r_node->column;
+		
+		for (Node* c_node = r_node->left; c_node != r_node; c_node = c_node->left) {
+		    Uncover(c_node->column);
+		}
 	    }
-
-	    m_cur_solution[k] = r_node;
-
-	    for (Node* c_node = r_node->right; c_node != r_node; c_node = c_node->right) {
-		Cover(c_node->column);
-	    }
-
-	    Search_(k+1);
-
-	    // \todo These two lines necessary?
-	    r_node = m_cur_solution[k];
-	    col_node = r_node->column;
-
-	    for (Node* c_node = r_node->left; c_node != r_node; c_node = c_node->left) {
-		Uncover(c_node->column);
-	    }
+	    
+	    Uncover(col_node);
 	}
-
-	Uncover(col_node);
     }
 
     /*
