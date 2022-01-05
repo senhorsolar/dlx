@@ -78,6 +78,8 @@ public:
 	    m_rows.push_back(std::move(row));
 	}
 
+	std::cout << "n nodes: " << node_count << '\n';
+
 	// Initialize memory pool and root node
 	m_pool.Resize(node_count + 1 /* for root */ + ncols);
 	m_root = m_pool.New();
@@ -149,7 +151,11 @@ public:
     }
 
     // Find all solutions and store in memory
-    void Search() { return Search_(0);}
+    void Search()
+    {
+	Search_(0);
+	std::cout << "n calls: " << m_n_calls << '\n';	
+    }
 
     // Get all solutions
     const std::vector<Solution>& GetSolutions() const { return m_solutions;}
@@ -233,6 +239,8 @@ private:
     // Recursively search for solutions
     void Search_(size_t k)
     {
+	++m_n_calls;
+	
 	Node* col_node = ChooseColumn();
 
 	// Potential solution found
@@ -284,6 +292,8 @@ private:
     std::vector<Solution> m_solutions; // soltuions
     std::vector<Node*> m_cur_solution; // for building current solution
     std::vector<std::vector<size_t>> m_rows; // map from row to covered columns
+
+    size_t m_n_calls = 0;
 };
     
 } // namespace
