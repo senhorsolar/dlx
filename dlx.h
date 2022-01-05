@@ -80,17 +80,6 @@ public:
 	    m_rows.push_back(std::move(row));
 	}
 
-	std::cout << "----rows start:\n";
-	for (auto& row : m_rows) {
-	    for (auto c : row) {
-		std::cout << c << ",";
-	    }
-	    std::cout << '\n';
-	}
-	std::cout << "----rows end\n";
-
-	std::cout << "n nodes: " << node_count << '\n';
-
 	// Initialize memory pool and root node
 	m_pool.Resize(node_count + 1 /* for root */ + ncols);
 	m_root = m_pool.New();
@@ -166,7 +155,6 @@ public:
     void Search()
     {
 	Search_(0);
-	std::cout << "n calls: " << m_n_calls << '\n';	
     }
 
     // Get all solutions
@@ -189,7 +177,7 @@ public:
 	    std::vector<T> decoded_row;
 	    const auto& cols = RowToColumns(row);
 	    for (size_t col : cols) {
-		decoded_row.push_back(columns[col]);
+		decoded_row.push_back(columns.at(col));
 	    }
 	    decoded_solution.push_back(std::move(decoded_row));
 	}
@@ -250,52 +238,49 @@ private:
 
     // Recursively search for solutions
     void Search_(size_t k)
-    {
-	++m_n_calls;
-	
+    {	
 	Node* col_node = ChooseColumn();
 
 	// Potential solution found
-	if (m_root->right == m_root) {
+	if (col_node == m_root) {
 	    Solution solution;
 	    std::transform(m_cur_solution.begin(), m_cur_solution.begin() + k,
 			   std::back_inserter(solution),
 			   [](Node* r) -> Index { return r->row_idx;});
 	    if (solution.size()) {
 		m_solutions.push_back(std::move(solution));
-	    }	    
+	    }
+	    return;	    
 	}
-	else {
-
-	    Cover(col_node);
+	
+	Cover(col_node);
+	
+	for (Node* r_node = col_node->down; r_node != col_node; r_node = r_node->down) {
 	    
-	    for (Node* r_node = col_node->down; r_node != col_node; r_node = r_node->down) {
-		
-		if (k >= m_cur_solution.size()) {
-		    m_cur_solution.resize(k * 2 + 1);
-		}
-		
-		m_cur_solution[k] = r_node;
-		
-		for (Node* c_node = r_node->right; c_node != r_node; c_node = c_node->right) {
-		    Cover(c_node->column);
-		}
-		
-		Search_(k+1);
-		
-		// \todo These two lines necessary?
-		r_node = m_cur_solution[k];
-		col_node = r_node->column;
-		
-		for (Node* c_node = r_node->left; c_node != r_node; c_node = c_node->left) {
-		    Uncover(c_node->column);
-		}
+	    if (k >= m_cur_solution.size()) {
+		m_cur_solution.resize(k * 2 + 1);
 	    }
 	    
-	    Uncover(col_node);
+	    m_cur_solution[k] = r_node;
+	    
+	    for (Node* c_node = r_node->right; c_node != r_node; c_node = c_node->right) {
+		Cover(c_node->column);
+	    }
+	    
+	    Search_(k+1);
+	    
+	    // \todo These two lines necessary?
+	    r_node = m_cur_solution[k];
+	    col_node = r_node->column;
+	    
+	    for (Node* c_node = r_node->left; c_node != r_node; c_node = c_node->left) {
+		Uncover(c_node->column);
+	    }
 	}
+	
+	Uncover(col_node);
     }
-
+    
     /*
       Member variables
      */
@@ -305,8 +290,6 @@ private:
     std::vector<Solution> m_solutions; // soltuions
     std::vector<Node*> m_cur_solution; // for building current solution
     std::vector<std::vector<size_t>> m_rows; // map from row to covered columns
-
-    size_t m_n_calls = 0;
 };
     
 } // namespace
